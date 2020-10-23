@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler-deployment
+spec:
+  selector:
+    matchLabels:
+      app: crawler
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: crawler
+    spec:
+      containers:
+      - name: crawler
+        image: sheu781230/crawler_local:v1
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args: ["/target_scripts/task.sh; sleep 600;"]
+        volumeMounts:
+        - name: targetscript
+          mountPath: /target_scripts
+        - name: baseimages
+          mountPath: /baseimages
+        - name: results
+          mountPath: /results
+      volumes:
+      - name: targetscript
+        configMap:
+          name: targetscript
+          defaultMode: 0744
+      - name: baseimages
+        hostPath:
+          path: /data/baseimages
+          type: Directory
+      - name: results
+        hostPath:
+          path: /data/results
+          type: Directory
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uploader-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uploader
+  template:
+    metadata:
+      labels:
+        app: uploader
+    spec:
+      containers:
+      - image: sheu781230/crawler_baseimage_upload:v1
+        name: uploader
+        command: ["/bin/sh", "-c"]
+        args: ["node index.js"]
+        volumeMounts:
+        - mountPath: /baseimages
+          name: baseimages
+      volumes:
+      - name: baseimages
+        hostPath:
+          path: /data/baseimages
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uploader-service
+spec:
+  selector:
+    app: uploader-deployment
+  ports:
+    - port: 3709
+      targetPort: 3709
+  type: LoadBalancer

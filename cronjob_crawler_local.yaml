@@ -1,0 +1,26 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob4crawler-demo
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob4crawler-demo
+            image: sheu781230/crawler_local:v1
+            args:
+              - /bin/sh
+              - -c
+              - node crawler_local.js ./baseimage/0a0e509d384d9584557c1ac1a1e93f00.jpg /data
+            volumeMounts:
+              - mountPath: /data
+                name: crawler-data
+          restartPolicy: OnFailure
+          volumes:
+          - name: crawler-data
+            hostPath:
+              path: /data
+              type: Directory
