@@ -77,9 +77,10 @@ kind: Service
 metadata:
   name: uploader-service
 spec:
+  type: NodePort
   selector:
-    app: uploader-deployment
+    app: uploader
   ports:
-    - port: 3709
-      targetPort: 3709
-  type: LoadBalancer
+  - port: 3709
+    targetPort: 3709
+    nodePort: 32100
