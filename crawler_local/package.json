@@ -1,0 +1,19 @@
+{
+  "name": "bing_search",
+  "version": "1.0.0",
+  "description": "",
+  "main": "crawler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fetch": "nodemon crawler.js"
+  },
+  "author": "jeffrey hsu",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "node-fetch": "^2.6.1",
+    "puppeteer": "^5.3.1",
+    "request": "^2.88.2",
+    "urlencode": "^1.1.0"
+  }
+}
