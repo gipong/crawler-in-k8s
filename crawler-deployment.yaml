@@ -10,7 +10,7 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 2
+      maxSurge: 1
       maxUnavailable: 1
   template:
     metadata:
@@ -22,7 +22,7 @@ spec:
         image: sheu781230/crawler_local:v1
         imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
-        args: ["/target_scripts/task.sh; sleep 600;"]
+        args: ["/target_scripts/task.sh; sleep 6000;"]
         volumeMounts:
         - name: targetscript
           mountPath: /target_scripts
